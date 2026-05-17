@@ -1,0 +1,27 @@
+{
+  "name": "@agent11/web",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@agent11/shared": "file:../../packages/shared",
+    "@vitejs/plugin-react": "^4.4.1",
+    "framer-motion": "^12.11.3",
+    "lucide-react": "^0.511.0",
+    "recharts": "^2.15.3",
+    "socket.io-client": "^4.8.1",
+    "vite": "^6.3.5",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "typescript": "^5.8.3"
+  }
+}

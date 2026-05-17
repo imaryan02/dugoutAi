@@ -1,0 +1,24 @@
+{
+  "name": "agent11-cricket-war-room",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n server,web -c cyan,magenta \"npm run dev --workspace apps/server\" \"npm run dev --workspace apps/web\"",
+    "build": "npm run build --workspace packages/shared && npm run build --workspace packages/cricket && npm run build --workspace packages/agents && npm run build --workspace apps/server && npm run build --workspace apps/web",
+    "check": "npm run typecheck --workspaces --if-present",
+    "server": "npm run dev --workspace apps/server",
+    "web": "npm run dev --workspace apps/web"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "react-router-dom": "^7.15.1"
+  }
+}
