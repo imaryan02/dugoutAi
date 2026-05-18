@@ -1,4 +1,4 @@
-# Agent11 Cricket War Room
+# DugoutAi Cricket War Room
 
 Local-first multi-agent cricket intelligence app using React, Node.js, Google ADK, Gemini, and a live cricket API.
 
@@ -21,6 +21,16 @@ Backend health:
 ```text
 http://localhost:4200/health
 ```
+
+## Deploy To Google Cloud Run
+
+This repo includes a Dockerfile and a Cloud Run deployment guide:
+
+```text
+DEPLOY_GCP.md
+```
+
+For a first deployment, use demo mode on Cloud Run, then add live cricket/TTS credentials after the service is working.
 
 ## Required Environment
 

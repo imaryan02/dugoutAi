@@ -119,13 +119,13 @@ const superOverScript: SuperBall[] = [
   { innings: "rcb", legalBall: 4, over: 0, ball: 5, outcome: "noBall", runs: 5, striker: "Rajat Patidar", nonStriker: "Devdutt Padikkal", bowler: "Noor Ahmad", commentarySeed: "No ball and four! Noor has crossed the line, Patidar has found the rope, and the stadium scoreboard just caught fire. Five from an illegal thunderbolt." },
   { innings: "rcb", legalBall: 5, over: 0, ball: 5, outcome: "one", runs: 1, striker: "Rajat Patidar", nonStriker: "Devdutt Padikkal", bowler: "Noor Ahmad", commentarySeed: "Patidar takes the single after the no-ball storm. RCB move to 18, and every CSK fan is already doing the chase math." },
   { innings: "rcb", legalBall: 6, over: 0, ball: 6, outcome: "wicket", runs: 0, wicket: "Devdutt Padikkal st MS Dhoni b Noor Ahmad", striker: "Devdutt Padikkal", nonStriker: "Rajat Patidar", bowler: "Noor Ahmad", commentarySeed: "Dhoni's gloves flash like a camera shutter! Noor closes with a wicket, but RCB have thrown 18 on the table. CSK need 19 in one over." },
-  { innings: "csk", legalBall: 1, over: 0, ball: 1, outcome: "one", runs: 1, striker: "MS Dhoni", nonStriker: "Sanju Samson", bowler: "Bhuvneshwar Kumar", commentarySeed: "Dhoni starts with the calmest single in a roaring stadium. CSK need 18 from 5, and the yellow wall has found its voice." },
-  { innings: "csk", legalBall: 2, over: 0, ball: 2, outcome: "four", runs: 4, striker: "Sanju Samson", nonStriker: "MS Dhoni", bowler: "Bhuvneshwar Kumar", commentarySeed: "Sanju paints the cover boundary! Pure timing, four more, and suddenly the chase has a heartbeat loud enough to shake the TV screen." },
-  { innings: "csk", legalBall: 3, over: 0, ball: 3, outcome: "six", runs: 6, striker: "Sanju Samson", nonStriker: "MS Dhoni", bowler: "Bhuvneshwar Kumar", commentarySeed: "Sanju launches the pressure into the top tier! Six into the yellow smoke, and CSK can see the finish line now." },
-  { innings: "csk", legalBall: 4, over: 0, ball: 4, outcome: "wicket", runs: 0, wicket: "Sanju Samson c Virat Kohli b Bhuvneshwar Kumar", striker: "Sanju Samson", nonStriker: "MS Dhoni", bowler: "Bhuvneshwar Kumar", commentarySeed: "Bhuvneshwar refuses to fold! Sanju goes for the kill, Kohli holds it, and RCB drag this Super Over back from the cliff." },
-  { innings: "csk", legalBall: 5, over: 0, ball: 5, outcome: "two", runs: 2, striker: "Ruturaj Gaikwad", nonStriker: "MS Dhoni", bowler: "Bhuvneshwar Kumar", commentarySeed: "Ruturaj clips it into the gap and sprints like the whole yellow stand is pushing him home. Two runs, CSK still need six." },
-  { innings: "csk", legalBall: 5, over: 0, ball: 6, outcome: "noBall", runs: 2, striker: "Ruturaj Gaikwad", nonStriker: "MS Dhoni", bowler: "Bhuvneshwar Kumar", commentarySeed: "No ball and two! Bhuvneshwar misses the line at the worst possible second. Extra ball, extra life, and the stadium turns completely yellow." },
-  { innings: "csk", legalBall: 6, over: 0, ball: 6, outcome: "six", runs: 6, striker: "Ruturaj Gaikwad", nonStriker: "MS Dhoni", bowler: "Bhuvneshwar Kumar", commentarySeed: "Ruturaj finishes it in one golden swing! Six into the stands, CSK win the Super Over, and Dhoni is punching the air before the ball lands." }
+  { innings: "csk", legalBall: 1, over: 0, ball: 1, outcome: "one", runs: 1, striker: "Sanju Samson", nonStriker: "Ruturaj Gaikwad", bowler: "Bhuvneshwar Kumar", commentarySeed: "Sanju opens the chase with a sharp single. CSK need 18 from 5, Ruturaj takes guard, and the yellow wall is getting louder." },
+  { innings: "csk", legalBall: 2, over: 0, ball: 2, outcome: "four", runs: 4, striker: "Ruturaj Gaikwad", nonStriker: "Sanju Samson", bowler: "Bhuvneshwar Kumar", commentarySeed: "Ruturaj paints the cover boundary! Pure timing, four more, and suddenly the chase has a heartbeat loud enough to shake the TV screen." },
+  { innings: "csk", legalBall: 3, over: 0, ball: 3, outcome: "six", runs: 6, striker: "Ruturaj Gaikwad", nonStriker: "Sanju Samson", bowler: "Bhuvneshwar Kumar", commentarySeed: "Ruturaj launches the pressure into the top tier! Six into the yellow smoke, and CSK can see the finish line now." },
+  { innings: "csk", legalBall: 4, over: 0, ball: 4, outcome: "wicket", runs: 0, wicket: "Ruturaj Gaikwad c Virat Kohli b Bhuvneshwar Kumar", striker: "Ruturaj Gaikwad", nonStriker: "Sanju Samson", bowler: "Bhuvneshwar Kumar", commentarySeed: "Bhuvneshwar refuses to fold! Ruturaj goes for the kill, Kohli holds it, and RCB drag this Super Over back from the cliff." },
+  { innings: "csk", legalBall: 5, over: 0, ball: 5, outcome: "two", runs: 2, striker: "MS Dhoni", nonStriker: "Sanju Samson", bowler: "Bhuvneshwar Kumar", commentarySeed: "Dhoni walks in and clips it into the gap. Two hard runs, CSK still need six, and every phone in the stadium is recording now." },
+  { innings: "csk", legalBall: 5, over: 0, ball: 6, outcome: "noBall", runs: 2, striker: "MS Dhoni", nonStriker: "Sanju Samson", bowler: "Bhuvneshwar Kumar", commentarySeed: "No ball and a run! Bhuvneshwar misses the line at the worst possible second. Extra ball, extra life, and the stadium turns completely yellow." },
+  { innings: "csk", legalBall: 6, over: 0, ball: 6, outcome: "six", runs: 6, striker: "MS Dhoni", nonStriker: "Sanju Samson", bowler: "Bhuvneshwar Kumar", commentarySeed: "Dhoni finishes it! One clean swing, six into the night, CSK win the Super Over, and the yellow stand explodes before the ball lands." }
 ];
 
 function legalBalls(event?: BallEvent) {
@@ -199,9 +199,9 @@ function superScorecard(rcbScore: number, rcbWickets: number, cskScore: number, 
     bowlingTeam: cskBatting ? demoBattingTeam.name : demoBowlingTeam.name,
     batters: cskBatting
       ? [
-          { name: "MS Dhoni", runs: 1, balls: 1, fours: 0, sixes: 0, strikeRate: "100.00", status: "batting", onCrease: latest?.striker === "MS Dhoni" || latest?.nonStriker === "MS Dhoni" },
-          { name: "Sanju Samson", runs: 10, balls: 3, fours: 1, sixes: 1, strikeRate: "333.33", status: cskWickets >= 1 ? "c Virat Kohli b Bhuvneshwar Kumar" : "batting", onCrease: latest?.striker === "Sanju Samson" || latest?.nonStriker === "Sanju Samson" },
-          { name: "Ruturaj Gaikwad", runs: Math.max(0, cskScore - 11), balls: Math.max(0, cskScore >= 13 ? 3 : 0), fours: 0, sixes: cskScore >= 21 ? 1 : 0, strikeRate: cskScore >= 21 ? "266.67" : "100.00", status: "not out", onCrease: latest?.striker === "Ruturaj Gaikwad" || latest?.nonStriker === "Ruturaj Gaikwad" }
+          { name: "Sanju Samson", runs: cskScore >= 1 ? 1 : 0, balls: cskScore >= 1 ? 1 : 0, fours: 0, sixes: 0, strikeRate: cskScore >= 1 ? "100.00" : "0.00", status: "not out", onCrease: latest?.striker === "Sanju Samson" || latest?.nonStriker === "Sanju Samson" },
+          { name: "Ruturaj Gaikwad", runs: cskScore >= 11 ? 10 : Math.max(0, cskScore - 1), balls: cskScore >= 11 ? 3 : Math.max(0, Math.min(2, cskScore > 1 ? 2 : 0)), fours: cskScore >= 5 ? 1 : 0, sixes: cskScore >= 11 ? 1 : 0, strikeRate: cskScore >= 11 ? "333.33" : "200.00", status: cskWickets >= 1 ? "c Virat Kohli b Bhuvneshwar Kumar" : "batting", onCrease: latest?.striker === "Ruturaj Gaikwad" || latest?.nonStriker === "Ruturaj Gaikwad" },
+          { name: "MS Dhoni", runs: cskScore >= 21 ? 9 : cskScore >= 15 ? 3 : cskScore >= 13 ? 2 : 0, balls: cskScore >= 21 ? 3 : cskScore >= 13 ? 2 : 0, fours: 0, sixes: cskScore >= 21 ? 1 : 0, strikeRate: cskScore >= 21 ? "300.00" : cskScore >= 13 ? "150.00" : "0.00", status: "not out", onCrease: latest?.striker === "MS Dhoni" || latest?.nonStriker === "MS Dhoni" }
         ]
       : [
           { name: "Virat Kohli", runs: 10, balls: 3, fours: 1, sixes: 1, strikeRate: "333.33", status: rcbWickets >= 1 ? "c Ruturaj Gaikwad b Noor Ahmad" : "batting", onCrease: latest?.striker === "Virat Kohli" || latest?.nonStriker === "Virat Kohli" },
@@ -214,7 +214,7 @@ function superScorecard(rcbScore: number, rcbWickets: number, cskScore: number, 
     extras: cskBatting
       ? { total: cskScore >= 16 ? 1 : 0, wides: 0, noBalls: cskScore >= 16 ? 1 : 0, byes: 0, legByes: 0 }
       : { total: rcbScore >= 17 ? 1 : 0, wides: 0, noBalls: rcbScore >= 17 ? 1 : 0, byes: 0, legByes: 0 },
-    partnership: cskBatting ? "Ruturaj / Dhoni" : "Patidar / Padikkal",
+    partnership: cskBatting ? "Dhoni / Sanju" : "Patidar / Padikkal",
     status: "Main match tied: RCB 191/6 and CSK 191/7. Super Over decides it.",
     oppositionBatting: {
       team: cskBatting ? demoBattingTeam.name : demoBowlingTeam.name,
@@ -228,9 +228,9 @@ function superScorecard(rcbScore: number, rcbWickets: number, cskScore: number, 
             { name: "Devdutt Padikkal", runs: 0, balls: 1, fours: 0, sixes: 0, strikeRate: "0.00", status: "st MS Dhoni b Noor Ahmad", onCrease: false }
           ]
         : [
-            { name: "MS Dhoni", runs: 0, balls: 0, fours: 0, sixes: 0, strikeRate: "0.00", status: "to bat", onCrease: false },
             { name: "Sanju Samson", runs: 0, balls: 0, fours: 0, sixes: 0, strikeRate: "0.00", status: "to bat", onCrease: false },
-            { name: "Ruturaj Gaikwad", runs: 0, balls: 0, fours: 0, sixes: 0, strikeRate: "0.00", status: "to bat", onCrease: false }
+            { name: "Ruturaj Gaikwad", runs: 0, balls: 0, fours: 0, sixes: 0, strikeRate: "0.00", status: "to bat", onCrease: false },
+            { name: "MS Dhoni", runs: 0, balls: 0, fours: 0, sixes: 0, strikeRate: "0.00", status: "to bat", onCrease: false }
           ],
       extras: cskBatting ? { total: 1, wides: 0, noBalls: 1, byes: 0, legByes: 0 } : { total: 0, wides: 0, noBalls: 0, byes: 0, legByes: 0 },
       status: cskBatting ? "RCB set 19 in the Super Over." : "CSK waiting to chase in the Super Over."
@@ -250,7 +250,7 @@ function createDemoState(score = 0, wickets = 0, balls = 0, recentBalls: BallEve
 
   return {
     matchId: DEMO_MATCH_ID,
-    venue: "Agent11 Demo Stadium",
+    venue: "DugoutAi Demo Stadium",
     battingTeam: demoBattingTeam,
     bowlingTeam: demoBowlingTeam,
     score,
@@ -321,7 +321,7 @@ function createSuperState(events: ReturnType<typeof buildSuperEvents>, cursor: n
 
   return {
     matchId: SUPER_OVER_MATCH_ID,
-    venue: "Agent11 Demo Stadium",
+    venue: "DugoutAi Demo Stadium",
     battingTeam: cskBatting ? demoBowlingTeam : demoBattingTeam,
     bowlingTeam: cskBatting ? demoBattingTeam : demoBowlingTeam,
     score,
@@ -379,25 +379,25 @@ export class DemoSixOverThriller {
           id: SUPER_OVER_MATCH_ID,
           name: "RCB vs CSK, Judge Mode Super Over",
           status: "Demo match - 14-ball Super Over with fan meters before each innings",
-          venue: "Agent11 Demo Stadium",
+          venue: "DugoutAi Demo Stadium",
           dateTimeGMT: new Date().toISOString(),
           teams: [demoBattingTeam.name, demoBowlingTeam.name],
           matchStarted: true,
           matchEnded: false,
           hasScore: true,
-          series: "Agent11 Hackathon Demo"
+          series: "DugoutAi Hackathon Demo"
         },
         {
           id: DEMO_MATCH_ID,
           name: "Royal Challengers Bengaluru vs Chennai Super Kings, 6-over thriller",
           status: "Demo match - scripted second-screen experience",
-          venue: "Agent11 Demo Stadium",
+          venue: "DugoutAi Demo Stadium",
           dateTimeGMT: new Date().toISOString(),
           teams: [demoBattingTeam.name, demoBowlingTeam.name],
           matchStarted: true,
           matchEnded: false,
           hasScore: true,
-          series: "Agent11 Hackathon Demo"
+          series: "DugoutAi Hackathon Demo"
         }
       ],
       status: "Demo mode: choose Judge Mode Super Over for a fast showcase, or run the scripted 6-over thriller. Add Cricbuzz/RapidAPI credentials in Settings for live mode."

@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.env
+.env.*
+cloudrun.env.yaml
+server.dev.log
+npm-debug.log*
+Dockerfile
+README.md

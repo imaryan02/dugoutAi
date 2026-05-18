@@ -1,6 +1,7 @@
 import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
@@ -41,18 +42,28 @@ function loadRootEnv() {
 }
 
 const envPath = loadRootEnv();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const server = http.createServer(app);
-const port = Number(process.env.SERVER_PORT || 4200);
+const port = Number(process.env.PORT || process.env.SERVER_PORT || 4200);
+const webDistPath = path.resolve(__dirname, "../../web/dist");
 
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    origin: process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim()).filter(Boolean)
+      : ["http://localhost:5173", "http://127.0.0.1:5173"],
     methods: ["GET", "POST"]
   }
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(",").map((origin) => origin.trim()).filter(Boolean)
+      : undefined
+  })
+);
 app.use(express.json());
 
 let matchState: MatchState | null = null;
@@ -62,11 +73,15 @@ let activities: AgentActivity[] = [];
 let running = true;
 let fanMeterHold = false;
 let lastFeedAdvanceAt = 0;
+let ballAudioHoldUntil = 0;
 let timer: NodeJS.Timeout | undefined;
+let fanMeterResumeTimer: NodeJS.Timeout | undefined;
 let feedStatus = "Waiting for live cricket API.";
 const initialProvider = process.env.CRICKET_PROVIDER || "demo";
 const liveProvider = initialProvider === "demo" ? process.env.CRICKET_LIVE_PROVIDER || "free_rapidapi_cricbuzz" : initialProvider;
-const pollMs = Number(process.env.CRICKET_POLL_MS || 6500);
+const pollMs = Number(process.env.CRICKET_POLL_MS || 15000);
+const secondInningsWaitMs = Number(process.env.SECOND_INNINGS_WAIT_MS || 7000);
+const boundaryAudioWaitMs = Number(process.env.BOUNDARY_AUDIO_WAIT_MS || 11000);
 const matchFilter = process.env.CRICKET_MATCH_FILTER === "all" ? "all" : "ipl";
 const useCricbuzzCommentary = process.env.CRICBUZZ_USE_COMMENTARY === "true";
 
@@ -116,7 +131,7 @@ function isSuperOverFanMeterCheckpoint(result: LiveFeedResult) {
 
 function autoPollIntervalMs() {
   if (activeSource === "demo") {
-    return isSuperOverDemo() ? 11000 : 9000;
+    return isSuperOverDemo() ? 15000 : 12000;
   }
   return pollMs;
 }
@@ -189,7 +204,47 @@ function clearSession() {
   outputs = [];
   activities = [];
   fanMeterHold = false;
+  if (fanMeterResumeTimer) {
+    clearTimeout(fanMeterResumeTimer);
+    fanMeterResumeTimer = undefined;
+  }
+  ballAudioHoldUntil = 0;
   lastFeedAdvanceAt = 0;
+}
+
+function isSecondInningsBreakPending() {
+  return Boolean(fanMeterResumeTimer);
+}
+
+function isBallAudioHoldPending() {
+  return Date.now() < ballAudioHoldUntil;
+}
+
+function applyBallAudioHold(event: LiveFeedResult["event"]) {
+  if (!event || (event.outcome !== "four" && event.outcome !== "six")) {
+    return;
+  }
+
+  ballAudioHoldUntil = Date.now() + boundaryAudioWaitMs;
+}
+
+function beginSecondInningsBreak() {
+  if (fanMeterResumeTimer) {
+    return;
+  }
+
+  fanMeterHold = false;
+  running = false;
+  feedStatus = `Fan meter result locked. Second innings starts in ${Math.round(secondInningsWaitMs / 1000)} seconds.`;
+  io.emit("snapshot", snapshot());
+
+  fanMeterResumeTimer = setTimeout(() => {
+    fanMeterResumeTimer = undefined;
+    running = true;
+    feedStatus = "Second innings starting. Watch the chase begin.";
+    io.emit("snapshot", snapshot());
+    void forceNextBall();
+  }, secondInningsWaitMs);
 }
 
 async function pollLiveFeed(trigger: "auto" | "manual" = "manual") {
@@ -198,6 +253,10 @@ async function pollLiveFeed(trigger: "auto" | "manual" = "manual") {
   }
 
   const now = Date.now();
+  if (now < ballAudioHoldUntil) {
+    return;
+  }
+
   if (trigger === "auto" && now - lastFeedAdvanceAt < autoPollIntervalMs()) {
     return;
   }
@@ -219,6 +278,7 @@ async function pollLiveFeed(trigger: "auto" | "manual" = "manual") {
 
   const moment = detectMoment(matchState, event);
   moments = [moment, ...moments].slice(0, 12);
+  applyBallAudioHold(event);
 
   io.emit("ball", event);
   io.emit("moment", moment);
@@ -256,6 +316,8 @@ app.get("/health", (_request, response) => {
     },
     cricketMatchId: process.env.CRICKET_MATCH_ID || null,
     pollMs,
+    secondInningsWaitMs,
+    boundaryAudioWaitMs,
     envPath,
     ttsEnabled: isTtsEnabled()
   });
@@ -290,6 +352,13 @@ app.post("/matches/select", (request, response) => {
   response.json({ ok: true, selectedMatchId: matchId, source: activeSource });
 });
 
+if (fs.existsSync(webDistPath)) {
+  app.use(express.static(webDistPath));
+  app.get(/.*/, (_request, response) => {
+    response.sendFile(path.join(webDistPath, "index.html"));
+  });
+}
+
 io.on("connection", (socket) => {
   socket.emit("snapshot", snapshot());
 
@@ -307,7 +376,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("resume", () => {
-    if (fanMeterHold) {
+    if (fanMeterHold || isSecondInningsBreakPending() || isBallAudioHoldPending()) {
       io.emit("snapshot", snapshot());
       return;
     }
@@ -316,7 +385,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("nextBall", () => {
-    if (fanMeterHold) {
+    if (fanMeterHold || isSecondInningsBreakPending() || isBallAudioHoldPending()) {
       io.emit("snapshot", snapshot());
       return;
     }
@@ -327,10 +396,7 @@ io.on("connection", (socket) => {
     if (!fanMeterHold || activeSource !== "demo" || !isSuperOverDemo()) {
       return;
     }
-    fanMeterHold = false;
-    running = true;
-    io.emit("snapshot", snapshot());
-    void forceNextBall();
+    beginSecondInningsBreak();
   });
 
   socket.on("jumpFinalOver", () => {
@@ -366,7 +432,7 @@ server.listen(port, () => {
     void pollLiveFeed("auto");
   }, 1000);
 
-  console.log(`Agent11 server running on http://localhost:${port}`);
+  console.log(`DugoutAi server running on http://localhost:${port}`);
 });
 
 process.on("SIGINT", () => {

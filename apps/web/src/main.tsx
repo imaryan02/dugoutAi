@@ -26,7 +26,7 @@ import type { AgentActivity, AgentOutput, BallEvent, DashboardSnapshot, MatchSta
 import { stadiumAudio } from "./stadiumAudio";
 import "./styles.css";
 
-const serverUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:4200";
+const serverUrl = import.meta.env.VITE_SERVER_URL || window.location.origin || "http://localhost:4200";
 const socket = io(serverUrl);
 
 const outcomeLabel: Record<string, string> = {
@@ -238,6 +238,8 @@ function App() {
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
       currentAudioRef.current.currentTime = 0;
+      currentAudioRef.current.src = "";
+      currentAudioRef.current.load();
       currentAudioRef.current = null;
     }
     audioPlayingRef.current = false;
@@ -355,7 +357,7 @@ function AppShell({ children, connected, snapshot }: { children: React.ReactNode
       <nav className="navbar">
         <NavLink to="/matches" className="brand-link">
           <Brain size={24} />
-          <span>Agent11</span>
+          <span>DugoutAi</span>
         </NavLink>
         <div className="nav-links">
           <NavLink to="/matches">
@@ -558,7 +560,7 @@ function Loading({ connected }: { connected: boolean }) {
     <main className="app-shell loading-shell">
       <motion.div className="loading-core" animate={{ scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }} transition={{ repeat: Infinity, duration: 1.8 }}>
         <Brain />
-        <span>{connected ? "Syncing match state" : "Connecting to Agent11 server"}</span>
+        <span>{connected ? "Syncing match state" : "Connecting to DugoutAi server"}</span>
       </motion.div>
     </main>
   );
@@ -600,64 +602,139 @@ function MatchHub({
   };
 
   return (
-    <main className="app-shell match-hub-shell">
+    <section className="match-hub-shell">
       <div className="ambient-grid" />
-      <header className="hub-hero">
-        <div>
-          <span className="panel-kicker">Start here</span>
-          <h1>Choose your match mode</h1>
-          <p>Run the guided demo thriller instantly, or use live mode when you have Cricbuzz/RapidAPI credentials configured.</p>
-        </div>
-        <div className="control-strip">
-          <button aria-label="Refresh IPL matches" onClick={onRefresh}>
-            <RotateCcw size={18} />
-          </button>
-        </div>
-      </header>
-      <section className="mode-choice-grid">
-        <article className="mode-choice-card primary">
-          <span className="panel-kicker">Recommended for demo</span>
-          <h2>Start demo match</h2>
-          <p>Open a quick chooser for Judge Mode Super Over or the longer 6-over thriller. No API required.</p>
-          <div className="mode-steps">
-            <span>Judge mode</span>
-            <span>6-over thriller</span>
-            <span>Can switch later</span>
+      <section className="home-layout">
+        <article className="product-story panel">
+          <span className="panel-kicker">Second-screen cricket experience</span>
+          <h1>DugoutAi makes fans part of the match, not just viewers.</h1>
+          <p>
+            Enjoy live cricket with your family and friends while Gemini-powered AI turns every key ball into commentary, fan battles, predictions, stadium sound, and shared match moments.
+          </p>
+          <div className="home-visual" aria-label="DugoutAi cricket experience preview">
+            <div className="home-visual-score">
+              <span>RCB vs CSK</span>
+              <strong>Need 6 off 1</strong>
+              <small>Gemini powered</small>
+            </div>
+            <div className="home-avatar-row">
+              <div className="cricket-avatar rcb tease">
+                <div className="home-avatar-head" />
+                <div className="home-avatar-body">RCB</div>
+                <span>NO</span>
+              </div>
+              <div className="home-ball-trail">
+                <i />
+                <b>YES</b>
+                <i />
+              </div>
+              <div className="cricket-avatar csk celebrate">
+                <div className="home-avatar-head" />
+                <div className="home-avatar-body">CSK</div>
+                <span>YES</span>
+              </div>
+            </div>
+            <div className="home-moment-strip">
+              <span>AI commentary</span>
+              <span>Fan meter</span>
+              <span>Win pulse</span>
+            </div>
           </div>
-          <button type="button" disabled={!demoMatches.length} onClick={() => setDemoChooserOpen(true)}>
-            Choose demo format
-          </button>
+          <div className="product-pill-row">
+            <span>Enjoy with family and friends</span>
+            <span>Gemini-powered agents</span>
+            <span>Real-time fan participation</span>
+            <span>Live AI commentary</span>
+            <span>Match predictions</span>
+          </div>
+          <div className="product-proof-grid">
+            <div>
+              <strong>Live</strong>
+              <span>score-driven moments</span>
+            </div>
+            <div>
+              <strong>AI</strong>
+              <span>commentary and strategy</span>
+            </div>
+            <div>
+              <strong>Fans</strong>
+              <span>predict, react, connect</span>
+            </div>
+          </div>
+          <div className="product-flow">
+            <span>Live score</span>
+            <i />
+            <span>Key moment</span>
+            <i />
+            <span>AI agents</span>
+            <i />
+            <span>Fan experience</span>
+          </div>
         </article>
 
-        <article className="mode-choice-card">
-          <span className="panel-kicker">Have an API key?</span>
-          <h2>Use live match API</h2>
-          <p>Add Cricbuzz/RapidAPI credentials in `.env`, refresh matches, then start a live match from the list below.</p>
-          <div className="mode-steps">
-            <span>Provider ready</span>
-            <span>{liveMatches.length ? `${liveMatches.length} live/API options` : "No live matches loaded"}</span>
+        <aside className="match-mode-panel">
+          <div className="mode-panel-head">
+            <div>
+              <span className="panel-kicker">Judge launchpad</span>
+              <h2>Start the showcase</h2>
+            </div>
+            <button aria-label="Refresh IPL matches" onClick={onRefresh}>
+              <RotateCcw size={18} />
+            </button>
           </div>
-          <button type="button" onClick={onRefresh}>
-            Refresh live matches
-          </button>
-        </article>
+
+          <div className="mode-choice-grid">
+            <article className="mode-choice-card primary">
+              <span className="panel-kicker">Best for judges</span>
+              <h2>Interactive Super Over</h2>
+              <p>A short RCB vs CSK climax where judges can feel the second-screen idea: families predict together, friends react live, AI voices speak, and the fan meter swings ball by ball.</p>
+              <div className="mode-steps">
+                <span>2 minutes</span>
+                <span>Full experience</span>
+                <span>High-impact demo</span>
+              </div>
+              <button type="button" disabled={!demoMatches.length} onClick={() => setDemoChooserOpen(true)}>
+                Choose demo mode
+              </button>
+            </article>
+
+            <article className="mode-choice-card">
+              <span className="panel-kicker">Real data mode</span>
+              <h2>Live match room</h2>
+              <p>Connect a live scorecard and DugoutAi uses Gemini-powered agents to create commentary, insights, and crowd energy from the match as it unfolds.</p>
+              <div className="mode-steps">
+                <span>{liveMatches.length ? `${liveMatches.length} options` : "No live matches"}</span>
+                <span>{snapshot.source === "demo" ? "Demo active" : "Live-ready"}</span>
+              </div>
+              <button type="button" onClick={onRefresh}>
+                Refresh live matches
+              </button>
+            </article>
+          </div>
+
+          <section className="api-match-section">
+            <div className="section-head">
+              <div>
+                <span className="panel-kicker">Optional live API</span>
+                <h2>Available matches</h2>
+              </div>
+              <p>{status}</p>
+            </div>
+            <MatchGrid matches={liveMatches} selectedMatchId={snapshot.selectedMatchId} actionLabel="Start live match" onSelect={startMatch} />
+          </section>
+
+          <div className="hub-status">
+            <Metric label="Socket" value={connected ? "Online" : "Offline"} />
+            <Metric label="Source" value={sourceLabel} />
+            <Metric label="Selection" value={snapshot.selectedMatchId ? (snapshot.source === "demo" ? "Demo started" : "Live started") : "Choose mode"} />
+          </div>
+        </aside>
       </section>
 
-      <section className="api-match-section">
-        <div className="section-head">
-          <div>
-            <span className="panel-kicker">Optional live API</span>
-            <h2>Start a live match</h2>
-          </div>
-          <p>{status}</p>
-        </div>
-        <MatchGrid matches={liveMatches} selectedMatchId={snapshot.selectedMatchId} actionLabel="Start live match" onSelect={startMatch} />
-      </section>
-      <div className="hub-status">
-        <Metric label="Socket" value={connected ? "Online" : "Offline"} />
-        <Metric label="Source" value={sourceLabel} />
-        <Metric label="Selection" value={snapshot.selectedMatchId ? (snapshot.source === "demo" ? "Demo started" : "Live started") : "Choose mode"} />
-      </div>
+      <footer className="site-footer">
+        <span>DugoutAi</span>
+        <p>Created by Aryan Gupta</p>
+      </footer>
       {demoChooserOpen && (
         <DemoChooserModal
           matches={demoMatches}
@@ -666,7 +743,7 @@ function MatchHub({
           onClose={() => setDemoChooserOpen(false)}
         />
       )}
-    </main>
+    </section>
   );
 }
 
@@ -991,7 +1068,7 @@ function TopBar({
         {connected ? snapshot.feedStatus : "Offline"}
         {snapshot.source === "demo" && <strong className="demo-badge">Demo</strong>}
         </div>
-        <h1>Agent11 War Room</h1>
+        <h1>DugoutAi War Room</h1>
         <p className="topbar-subtitle">{selectedMatch?.name ?? `${matchState.battingTeam.name} innings`}</p>
       </div>
       <div className="match-chip">
@@ -1189,10 +1266,14 @@ function FanArena({
   const audioContextRef = React.useRef<AudioContext | null>(null);
   const fxAudioContextRef = React.useRef<AudioContext | null>(null);
   const crowdAudioRef = React.useRef<HTMLAudioElement | null>(null);
+  const tuneAudioRef = React.useRef<HTMLAudioElement | null>(null);
   const tuneIntervalRef = React.useRef<number | null>(null);
   const allSoundMutedRef = React.useRef(false);
+  const crowdEnabledRef = React.useRef(false);
+  const tuneEnabledRef = React.useRef(false);
   const noBallCountRef = React.useRef(matchState.scorecard?.extras.noBalls ?? 0);
   const noBallEventRef = React.useRef<string | null>(null);
+  const boundaryEventRef = React.useRef<string | null>(null);
   const wicketEventRef = React.useRef<string | null>(null);
   const cskWinCheerRef = React.useRef<string | null>(null);
   const fanMeterAudioAtRef = React.useRef(0);
@@ -1261,6 +1342,11 @@ function FanArena({
   };
   const activeCheerTeam = cheerPhase === "batting" ? matchState.battingTeam.shortName : matchState.bowlingTeam.shortName;
   const activeCheerAudio = cheerPhase === "batting" ? stadiumAudio.teamCheer : stadiumAudio.opponentCheer;
+  const isDhoniFinalSix =
+    isSuperOverMode &&
+    matchState.battingTeam.shortName === "CSK" &&
+    latestBall?.outcome === "six" &&
+    latestBall.striker === "MS Dhoni";
   const pollOptions = Object.keys(predictionLabels) as PredictionChoice[];
   const revealText =
     latestBall?.outcome === "wicket"
@@ -1340,27 +1426,69 @@ function FanArena({
     playStadiumOneShot(stadiumAudio.leagueTune, 0.48);
   }, [playStadiumOneShot]);
 
+  const startCrowdLoop = React.useCallback(() => {
+    allSoundMutedRef.current = false;
+    setAllSoundMuted(false);
+    crowdEnabledRef.current = true;
+    setCrowdEnabled(true);
+
+    const audio = crowdAudioRef.current ?? new Audio(stadiumAudio.crowdBed);
+    audio.loop = true;
+    audio.volume = 0.26;
+    audio.onpause = () => {
+      if (!crowdEnabledRef.current || allSoundMutedRef.current) {
+        return;
+      }
+      window.setTimeout(() => {
+        if (crowdEnabledRef.current && !allSoundMutedRef.current) {
+          void audio.play().catch(() => undefined);
+        }
+      }, 250);
+    };
+    audio.onended = audio.onpause;
+    crowdAudioRef.current = audio;
+    void audio.play().catch(() => setCrowdEnabled(false));
+  }, []);
+
+  const startTuneLoop = React.useCallback(() => {
+    allSoundMutedRef.current = false;
+    setAllSoundMuted(false);
+    tuneEnabledRef.current = true;
+    setTuneEnabled(true);
+
+    const audio = tuneAudioRef.current ?? new Audio(stadiumAudio.leagueTune);
+    audio.loop = true;
+    audio.volume = 0.48;
+    audio.onpause = () => {
+      if (!tuneEnabledRef.current || allSoundMutedRef.current) {
+        return;
+      }
+      window.setTimeout(() => {
+        if (tuneEnabledRef.current && !allSoundMutedRef.current) {
+          void audio.play().catch(() => undefined);
+        }
+      }, 250);
+    };
+    audio.onended = audio.onpause;
+    tuneAudioRef.current = audio;
+    void audio.play().catch(() => setTuneEnabled(false));
+  }, []);
+
   const toggleCrowdBed = React.useCallback(() => {
     if (crowdEnabled) {
+      crowdEnabledRef.current = false;
       crowdAudioRef.current?.pause();
       setCrowdEnabled(false);
       return;
     }
 
-    allSoundMutedRef.current = false;
-    setAllSoundMuted(false);
-    const audio = crowdAudioRef.current ?? new Audio(stadiumAudio.crowdBed);
-    audio.loop = true;
-    audio.volume = 0.26;
-    crowdAudioRef.current = audio;
-    void audio
-      .play()
-      .then(() => setCrowdEnabled(true))
-      .catch(() => setCrowdEnabled(false));
-  }, [crowdEnabled]);
+    startCrowdLoop();
+  }, [crowdEnabled, startCrowdLoop]);
 
   const toggleLeagueTune = React.useCallback(() => {
     if (tuneEnabled) {
+      tuneEnabledRef.current = false;
+      tuneAudioRef.current?.pause();
       if (tuneIntervalRef.current) {
         window.clearInterval(tuneIntervalRef.current);
         tuneIntervalRef.current = null;
@@ -1369,50 +1497,45 @@ function FanArena({
       return;
     }
 
-    allSoundMutedRef.current = false;
-    setAllSoundMuted(false);
-    setTuneEnabled(true);
-    playLeagueTune();
-    tuneIntervalRef.current = window.setInterval(playLeagueTune, 45000);
-  }, [playLeagueTune, tuneEnabled]);
+    startTuneLoop();
+  }, [startTuneLoop, tuneEnabled]);
 
   const muteAllSound = React.useCallback(() => {
     allSoundMutedRef.current = true;
+    crowdEnabledRef.current = false;
+    tuneEnabledRef.current = false;
     setAllSoundMuted(true);
     setStadiumFxEnabled(false);
     setTuneEnabled(false);
     setCrowdEnabled(false);
     crowdAudioRef.current?.pause();
+    tuneAudioRef.current?.pause();
     if (tuneIntervalRef.current) {
       window.clearInterval(tuneIntervalRef.current);
       tuneIntervalRef.current = null;
     }
-    onStopVoice();
-  }, [onStopVoice]);
+  }, []);
 
   const unmuteAllSound = React.useCallback(() => {
     allSoundMutedRef.current = false;
     setAllSoundMuted(false);
     setStadiumFxEnabled(true);
-    onEnableVoice();
 
-    const crowd = crowdAudioRef.current ?? new Audio(stadiumAudio.crowdBed);
-    crowd.loop = true;
-    crowd.volume = 0.26;
-    crowdAudioRef.current = crowd;
-    void crowd.play().then(() => setCrowdEnabled(true)).catch(() => setCrowdEnabled(false));
-
-    setTuneEnabled(true);
-    window.setTimeout(playLeagueTune, 0);
-    if (tuneIntervalRef.current) {
-      window.clearInterval(tuneIntervalRef.current);
-    }
-    tuneIntervalRef.current = window.setInterval(playLeagueTune, 45000);
-  }, [onEnableVoice, playLeagueTune]);
+    startCrowdLoop();
+    startTuneLoop();
+  }, [startCrowdLoop, startTuneLoop]);
 
   React.useEffect(() => {
     allSoundMutedRef.current = allSoundMuted;
   }, [allSoundMuted]);
+
+  React.useEffect(() => {
+    crowdEnabledRef.current = crowdEnabled;
+  }, [crowdEnabled]);
+
+  React.useEffect(() => {
+    tuneEnabledRef.current = tuneEnabled;
+  }, [tuneEnabled]);
 
   React.useEffect(() => {
     if (autoSoundStartedRef.current === matchState.matchId || allSoundMuted) {
@@ -1423,19 +1546,9 @@ function FanArena({
     setStadiumFxEnabled(true);
     onEnableVoice();
 
-    const crowd = crowdAudioRef.current ?? new Audio(stadiumAudio.crowdBed);
-    crowd.loop = true;
-    crowd.volume = 0.26;
-    crowdAudioRef.current = crowd;
-    void crowd.play().then(() => setCrowdEnabled(true)).catch(() => setCrowdEnabled(false));
-
-    setTuneEnabled(true);
-    window.setTimeout(playLeagueTune, 0);
-    if (tuneIntervalRef.current) {
-      window.clearInterval(tuneIntervalRef.current);
-    }
-    tuneIntervalRef.current = window.setInterval(playLeagueTune, 45000);
-  }, [allSoundMuted, matchState.matchId, onEnableVoice, playLeagueTune]);
+    startCrowdLoop();
+    startTuneLoop();
+  }, [allSoundMuted, matchState.matchId, onEnableVoice, startCrowdLoop, startTuneLoop]);
 
   React.useEffect(() => {
     setCountdown(10);
@@ -1554,6 +1667,22 @@ function FanArena({
   }, [latestBall, playStadiumOneShot]);
 
   React.useEffect(() => {
+    if (!latestBall || (latestBall.outcome !== "four" && latestBall.outcome !== "six") || boundaryEventRef.current === latestBall.id) {
+      return;
+    }
+
+    boundaryEventRef.current = latestBall.id;
+    if (isDhoniFinalSix) {
+      cskWinCheerRef.current = latestBall.id;
+      playStadiumOneShot(stadiumAudio.dhoniFinish, 0.96);
+      window.setTimeout(() => playStadiumOneShot(stadiumAudio.opponentCheer, 0.9), 21000);
+      return;
+    }
+
+    playStadiumOneShot(stadiumAudio.boundarySting, latestBall.outcome === "six" ? 0.96 : 0.88);
+  }, [isDhoniFinalSix, latestBall, playStadiumOneShot]);
+
+  React.useEffect(() => {
     if (!latestBall || latestBall.outcome !== "wicket" || wicketEventRef.current === latestBall.id) {
       return;
     }
@@ -1569,8 +1698,12 @@ function FanArena({
     }
 
     cskWinCheerRef.current = latestBall.id;
+    if (isDhoniFinalSix) {
+      return;
+    }
+
     window.setTimeout(() => playStadiumOneShot(stadiumAudio.opponentCheer, 0.86), 700);
-  }, [isComplete, isSuperOverMode, latestBall, matchState.battingTeam.shortName, playStadiumOneShot]);
+  }, [isComplete, isDhoniFinalSix, isSuperOverMode, latestBall, matchState.battingTeam.shortName, playStadiumOneShot]);
 
   React.useEffect(() => {
     if (!eventAlert) {
@@ -1636,11 +1769,11 @@ function FanArena({
         });
         setCheerPhase("batting");
         setManualDugoutScene(false);
-        setDugoutScene(runtime.fanMeterCheckpoint ? "matchStart" : "battleResult");
+        setDugoutScene("battleResult");
         if (runtime.fanMeterCheckpoint) {
           window.setTimeout(() => {
             socket.emit("fanMeterComplete");
-          }, 2800);
+          }, 600);
         }
       }
 
@@ -1669,7 +1802,10 @@ function FanArena({
         window.cancelAnimationFrame(animationFrameRef.current);
       }
       micStreamRef.current?.getTracks().forEach((track) => track.stop());
+      crowdEnabledRef.current = false;
+      tuneEnabledRef.current = false;
       crowdAudioRef.current?.pause();
+      tuneAudioRef.current?.pause();
       if (tuneIntervalRef.current) {
         window.clearInterval(tuneIntervalRef.current);
       }
@@ -1719,8 +1855,6 @@ function FanArena({
   }, [playAttentionFx]);
 
   const enableVoiceSound = React.useCallback(() => {
-    allSoundMutedRef.current = false;
-    setAllSoundMuted(false);
     onEnableVoice();
   }, [onEnableVoice]);
 
@@ -1826,18 +1960,7 @@ function FanArena({
                 Match point
               </span>
               <strong>{matchState.battingTeam.shortName} win the thriller</strong>
-              <p>
-                {selectedTeamWon === null
-                  ? "Pick a side before replaying to feel the fan swing."
-                  : selectedTeamWon
-                    ? "Your side survives the pressure chase."
-                    : "Your side gets teased after the final-ball boundary."}
-              </p>
-              <div className="climax-stats">
-                <Metric label="Fan score" value={fanScore} />
-                <Metric label="Accuracy" value={`${fanAccuracy}%`} />
-                <Metric label="Best streak" value={bestStreak || streak} />
-              </div>
+              <p>Dhoni finishes it with a final-ball six. CSK take the Super Over.</p>
               <div className="climax-actions">
                 <button onClick={() => socket.emit("replay")}>
                   <RotateCcw size={16} />
@@ -2086,7 +2209,7 @@ function FanAvatar({ team, mood, active }: { team: string; mood: string; active:
           <span className="avatar-cheek left" />
           <span className="avatar-cheek right" />
         </div>
-        <span className="avatar-bubble">{mood === "celebrate" ? "SIX" : mood === "stunned" ? "NO" : mood === "frustrated" ? "WHY" : "WATCH"}</span>
+        <span className="avatar-bubble">{mood === "celebrate" || mood === "smirk" ? "YES" : "NO"}</span>
       </div>
       <strong>{team}</strong>
       <p>{poseLabel}</p>
@@ -2315,7 +2438,7 @@ function InsightStack({
         </div>
         <p>
           At {state.runRate.toFixed(2)} rpo, projected finish is {state.projectedScore}.{" "}
-          {state.target > 0 ? `Required rate is ${state.requiredRunRate.toFixed(2)}.` : "Target will appear in chase mode."}
+          {state.target > 0 ? `${state.battingTeam.shortName} need ${runsNeeded} from ${ballsLeft}. Required rate is ${state.requiredRunRate.toFixed(2)}.` : "Target will appear in chase mode."}
         </p>
         <div className="score-projection-chart">
           <ResponsiveContainer width="100%" height={112}>
@@ -2328,6 +2451,7 @@ function InsightStack({
           </ResponsiveContainer>
         </div>
         <div className="prediction-metrics">
+          <Metric label="To win" value={state.target > 0 ? `${runsNeeded}/${ballsLeft}` : "N/A"} />
           <Metric label="Run rate" value={state.runRate.toFixed(2)} />
           <Metric label="Req rate" value={state.requiredRunRate > 0 ? state.requiredRunRate.toFixed(2) : "N/A"} />
         </div>
