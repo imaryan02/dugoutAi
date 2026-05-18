@@ -2480,6 +2480,7 @@ function InsightStack({
         <p>{fanBattle ? `Latest crowd battle captured at ${new Date(fanBattle.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}.` : "Dugout.AI will store the latest cheer winner after the next Fans Battle."}</p>
       </div>
 
+      <AskGeminiPanel snapshot={snapshot} />
       <InsightCard icon={<Gauge />} title="Your Score" text={`${fanScore} points. Current streak: ${streak}. ${selectedNote}`} />
       <InsightCard icon={<Sparkles />} title="Strategy Agent" text={strategy?.text ?? "Tactical advice will appear after the next trigger."} />
       <InsightCard icon={<Activity />} title="Crowd Pulse" text={sentiment?.text ?? `${Math.round(state.winProbability)}% fan belief for ${state.battingTeam.shortName}. Noise level ${Math.round(state.crowdEnergy)}%.`} />
@@ -2712,6 +2713,131 @@ function StadiumFeelPanel({ matchState, latestBall, selectedSide }: { matchState
       <p className="pulse-copy">
         {latestBall ? latestBall.commentarySeed : "The crowd is waiting for the first ball reveal."}
       </p>
+    </section>
+  );
+}
+
+function AskGeminiPanel({ snapshot }: { snapshot: DashboardSnapshot }) {
+  type ChatMessage = {
+    id: string;
+    role: "user" | "gemini";
+    text: string;
+  };
+  const [question, setQuestion] = React.useState("");
+  const [messages, setMessages] = React.useState<ChatMessage[]>([
+    {
+      id: "welcome",
+      role: "gemini",
+      text: "Ask about the chase, pressure, win chance, best strategy, or the last ball."
+    }
+  ]);
+  const [loading, setLoading] = React.useState(false);
+  const canAsk = Boolean(question.trim()) && !loading;
+
+  const ask = async () => {
+    const trimmed = question.trim();
+    if (!trimmed) {
+      return;
+    }
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      text: trimmed
+    };
+    setMessages((current) => [...current, userMessage].slice(-8));
+    setQuestion("");
+    setLoading(true);
+    try {
+      const response = await fetch(`${serverUrl}/ask-gemini`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ question: trimmed })
+      });
+      const payload = (await response.json()) as { ok: boolean; answer?: string; error?: string };
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.error || "Gemini could not answer right now.");
+      }
+      const geminiMessage: ChatMessage = {
+        id: `gemini-${Date.now()}`,
+        role: "gemini",
+        text: payload.answer || "No answer returned."
+      };
+      setMessages((current) => [
+        ...current,
+        geminiMessage
+      ].slice(-8));
+    } catch (askError) {
+      const errorMessage: ChatMessage = {
+        id: `gemini-error-${Date.now()}`,
+        role: "gemini",
+        text: askError instanceof Error ? askError.message : "Gemini could not answer right now."
+      };
+      setMessages((current) => [
+        ...current,
+        errorMessage
+      ].slice(-8));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sampleQuestions = [
+    "Who is under more pressure?",
+    "What should the bowler try now?",
+    "Can this team still win?"
+  ];
+
+  return (
+    <section className="panel ask-gemini-panel">
+      <div className="panel-head">
+        <div>
+          <span className="panel-kicker">Ask Gemini</span>
+          <h2>Match Q&A</h2>
+        </div>
+        <Sparkles />
+      </div>
+      <div className="ask-gemini-body">
+        <div className="ask-chat-list">
+          <span>{snapshot.source === "demo" ? "Demo context" : "Live context"}</span>
+          {messages.map((message) => (
+            <div key={message.id} className={`ask-message ${message.role}`}>
+              <strong>{message.role === "user" ? "You" : "Gemini"}</strong>
+              <p>{message.text}</p>
+            </div>
+          ))}
+          {loading && (
+            <div className="ask-message gemini typing">
+              <strong>Gemini</strong>
+              <p>Reading the match...</p>
+            </div>
+          )}
+        </div>
+        <div className="ask-gemini-form">
+          <textarea
+            value={question}
+            maxLength={500}
+            placeholder="Ask a match question..."
+            onChange={(event) => setQuestion(event.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                void ask();
+              }
+            }}
+          />
+          <button disabled={!canAsk} onClick={() => void ask()}>
+            <Brain size={16} />
+            {loading ? "Asking" : "Ask"}
+          </button>
+        </div>
+        <div className="ask-samples">
+          {sampleQuestions.map((sample) => (
+            <button key={sample} onClick={() => setQuestion(sample)}>
+              {sample}
+            </button>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

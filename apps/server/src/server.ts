@@ -295,10 +295,81 @@ async function forceNextBall() {
   running = wasRunning;
 }
 
+function geminiApiKey() {
+  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || "";
+}
+
+function compactMatchContext() {
+  return {
+    source: activeSource,
+    feedStatus,
+    selectedMatchId: activeFeed.getSelectedMatchId(),
+    matchState,
+    latestMoments: moments.slice(0, 5),
+    latestAgentOutputs: outputs.slice(0, 8).map((output) => ({
+      label: output.label,
+      text: output.text,
+      confidence: output.confidence,
+      createdAt: output.createdAt
+    }))
+  };
+}
+
+async function answerMatchQuestion(question: string) {
+  const key = geminiApiKey();
+  if (!key) {
+    throw new Error("Gemini API key is not configured.");
+  }
+
+  const model = process.env.GEMINI_MODEL || "gemini-flash-latest";
+  const modelPath = model.startsWith("models/") ? model : `models/${model}`;
+  const prompt = [
+    "You are DugoutAi's match assistant.",
+    "Answer only cricket-match-related questions using the supplied match context.",
+    "If the answer is not available in the context, say what is missing and suggest the closest useful match insight.",
+    "Keep the answer concise, practical, and fan-friendly. Use Hinglish only when the question uses Hinglish; otherwise use English.",
+    "",
+    `Question: ${question}`,
+    "",
+    `Match context JSON:\n${JSON.stringify(compactMatchContext(), null, 2)}`
+  ].join("\n");
+
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/${modelPath}:generateContent?key=${encodeURIComponent(key)}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      contents: [
+        {
+          role: "user",
+          parts: [{ text: prompt }]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.45,
+        maxOutputTokens: 280
+      }
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error(`Gemini answer request failed with HTTP ${response.status}.`);
+  }
+
+  const payload = (await response.json()) as {
+    candidates?: Array<{
+      content?: {
+        parts?: Array<{ text?: string }>;
+      };
+    }>;
+  };
+  const answer = payload.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim();
+  return answer || "Gemini did not return an answer for this match question.";
+}
+
 app.get("/health", (_request, response) => {
   response.json({
     ok: true,
-    geminiConfigured: Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY),
+    geminiConfigured: Boolean(geminiApiKey()),
     commentaryLanguage: process.env.COMMENTARY_LANGUAGE || "hinglish",
     cricketProvider: initialProvider,
     liveProvider,
@@ -325,6 +396,28 @@ app.get("/health", (_request, response) => {
 
 app.get("/snapshot", (_request, response) => {
   response.json(snapshot());
+});
+
+app.post("/ask-gemini", async (request, response) => {
+  const question = typeof request.body?.question === "string" ? request.body.question.trim() : "";
+  if (!question) {
+    response.status(400).json({ ok: false, error: "question is required" });
+    return;
+  }
+  if (question.length > 500) {
+    response.status(400).json({ ok: false, error: "question must be 500 characters or fewer" });
+    return;
+  }
+
+  try {
+    const answer = await answerMatchQuestion(question);
+    response.json({ ok: true, answer, source: activeSource, selectedMatchId: activeFeed.getSelectedMatchId() });
+  } catch (error) {
+    response.status(502).json({
+      ok: false,
+      error: error instanceof Error ? error.message : "Gemini answer request failed."
+    });
+  }
 });
 
 app.get("/matches/ipl", async (_request, response) => {
