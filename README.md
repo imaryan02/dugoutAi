@@ -1,6 +1,6 @@
 # DugoutAi Cricket War Room
 
-Local-first multi-agent cricket intelligence app using React, Node.js, Google ADK, Gemini, and a live cricket API.
+Local-first multi-agent cricket intelligence app using React, Node.js, Google ADK, Gemini, and a live cricket API..
 
 ## Run Locally
 
